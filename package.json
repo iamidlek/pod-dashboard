@@ -2,6 +2,7 @@
   "name": "real-time-dashboard",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8001",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
@@ -10,6 +11,10 @@
     "@types/node": "^16.11.33",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
+    "axios": "^0.27.2",
+    "http": "0.0.1-security",
+    "mobx": "^6.5.0",
+    "mobx-react": "^7.4.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
@@ -17,9 +22,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -39,5 +44,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-decorators": "^7.17.9",
+    "core-decorators": "^0.20.0",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1"
   }
 }
