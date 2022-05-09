@@ -3,39 +3,34 @@ import { makeObservable, observable, action } from "mobx";
 class TestStore {
   @observable allPods: Iallpods = {};
 
-  resourceVersion: string = "";
+  resourceVersion: number | null = null;
 
   constructor() {
     makeObservable(this);
   }
 
-  async createStream() {
-    try {
-      console.log("start");
-      const response = await fetch(
-        `/api/v1/pods?watch=1&resourceVersion=${this.resourceVersion}`
-      );
-      console.log("done");
-      const stream = response?.body?.getReader();
-      const utf8Decoder = new TextDecoder("utf-8");
+  createStream() {
+    fetch(`/api/v1/pods?watch=1&resourceVersion=${this.resourceVersion}`)
+      .then((response) => {
+        const stream = response.body!.getReader();
+        const utf8Decoder = new TextDecoder("utf-8");
+        // k8bit 의 경우 read 전까지 실행이 되나어 before가 찍힘
+        // react 의 경우 createStream 자체
+        console.log("before");
+        return stream.read().then(function processText({ done, value }): any {
+          if (done) {
+            console.log("Request terminated");
+            return;
+          }
+          console.log(done, utf8Decoder.decode(value));
 
-      if (!stream) {
-        console.log("err");
-        return;
-      }
-      const res = await stream.read();
-      console.log(res);
-      // const stream = response.body.getReader();
-      // try {
-      //   const res = await stream.read();
-      //   processText(res, stream);
-      // } catch {
-      //   console.log("stream fail");
-      // }
-    } catch (error) {
-      console.log("error");
-      setTimeout(() => this.createStream(), 5000);
-    }
+          return stream.read().then(processText);
+        });
+      })
+      .catch(() => {
+        console.log("Error! Retrying in 5 seconds...");
+        setTimeout(() => this.createStream(), 5000);
+      });
   }
 
   setPodInfo(pods: Item[]) {
@@ -121,7 +116,7 @@ interface InitResponse {
   apiVersion: string;
   items: Item[];
   kind: string;
-  metadata: { resourceVersion: string };
+  metadata: { resourceVersion: number };
 }
 
 export default TestStore;
