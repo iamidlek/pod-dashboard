@@ -150,6 +150,7 @@ const App = inject("store")(
 
     useEffect(() => {
       init();
+      console.log("pushtest");
     }, []);
     return (
       <div className="App">
